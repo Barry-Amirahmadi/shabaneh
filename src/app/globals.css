@@ -313,15 +313,6 @@
     z-index: 0;
   }
 
-  /* The band clips its own overflow, so the ring and its halo have to be drawn
-     inwards or they are cut off and the control has no visible focus at all.
-     Same geometry as the global ring, mirrored: halo 0-10px in, brass at 6-8px.
-     An inset shadow rather than a spread one for the same reason. */
-  .band__hit:focus-visible {
-    outline-offset: -6px;
-    box-shadow: inset 0 0 0 10px var(--color-focus-halo);
-  }
-
   /* A band with no photograph. After four full-bleed images the absence of one
      is what makes a section read as a pause rather than as a gap, so this is a
      composition decision rather than a fallback. */
@@ -438,6 +429,23 @@
   outline-offset: 2px;
   box-shadow: 0 0 0 6px var(--color-focus-halo);
   border-radius: var(--radius-none);
+}
+
+/* The full-bleed controls, mirrored inwards.
+   A band clips its own overflow, so a ring painted OUTWARDS on an `inset: 0`
+   control is cut off completely and the control has no visible focus at all.
+   Halo 0-10px in, brass at 6-8px — the same geometry as above, reflected.
+
+   **Unlayered on purpose, and this is not a style preference.** This rule lived
+   in `@layer components` first, where it lost to the unlayered rule above no
+   matter how specific it was — an unlayered declaration beats a layered one
+   outright. The result was a brass outline drawn 2px outside a control the size
+   of the whole band, clipped away by the band, and six photo buttons with no
+   focus indicator whatsoever. Found by `npm run check:bands`, which reported
+   zero changed pixels on focus. Keep it here, next to the rule it overrides. */
+.band__hit:focus-visible {
+  outline-offset: -6px;
+  box-shadow: inset 0 0 0 10px var(--color-focus-halo);
 }
 
 .skip-link {

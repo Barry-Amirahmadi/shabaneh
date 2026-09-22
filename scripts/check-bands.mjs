@@ -398,7 +398,43 @@ const compareCrops = async ({ before, after }) => {
   }
   if (changed === 0) return { changed: 0 };
 
-  // The real adjacency: unchanged pixels touching a changed one. Those are what
+  // Only the pixels OUTSIDE the indicator count as its neighbours. Flood the
+  // unchanged pixels inward from the crop border; anything the flood cannot
+  // reach is enclosed by the indicator — the link's own label, or the
+  // photograph inside a full-bleed control's inset ring.
+  //
+  // Without this the label was the neighbour: on two dish links the ring's
+  // inner edge touches the ink of the name, ink is the brightest thing around,
+  // and the harness reported brass-against-ink at 1.48:1 as a failed focus
+  // ring. A focus indicator does not have to contrast with the word it
+  // surrounds; it has to contrast with what is behind it.
+  const exterior = new Uint8Array(a.w * a.h);
+  const queue = [];
+  const flood = (x, y) => {
+    const i = y * a.w + x;
+    if (mask[i] || exterior[i]) return;
+    exterior[i] = 1;
+    queue.push(i);
+  };
+  for (let x = 0; x < a.w; x += 1) {
+    flood(x, 0);
+    flood(x, a.h - 1);
+  }
+  for (let y = 0; y < a.h; y += 1) {
+    flood(0, y);
+    flood(a.w - 1, y);
+  }
+  while (queue.length) {
+    const i = queue.pop();
+    const x = i % a.w;
+    const y = (i - x) / a.w;
+    if (x > 0) flood(x - 1, y);
+    if (x < a.w - 1) flood(x + 1, y);
+    if (y > 0) flood(x, y - 1);
+    if (y < a.h - 1) flood(x, y + 1);
+  }
+
+  // The real adjacency: exterior pixels touching a changed one. Those are what
   // the indicator has to stand out against, and the brightest of them is the
   // one that would swallow it.
   let outside = null;
@@ -406,7 +442,7 @@ const compareCrops = async ({ before, after }) => {
   let boundary = 0;
   for (let y = 0; y < a.h; y += 1) {
     for (let x = 0; x < a.w; x += 1) {
-      if (mask[y * a.w + x]) continue;
+      if (mask[y * a.w + x] || !exterior[y * a.w + x]) continue;
       const touches =
         (x > 0 && mask[y * a.w + x - 1]) ||
         (x < a.w - 1 && mask[y * a.w + x + 1]) ||
@@ -652,6 +688,10 @@ async function focusRings(browser, route, limit = 6) {
   let overImage = 0;
   await page.keyboard.press("Tab");
   for (let i = 0; i < 28 && results.length < limit; i += 1) {
+    // Long enough for a link's underline transition to finish. At 120ms the
+    // two shots caught it mid-draw and the diff reported the underline as the
+    // focus ring, which measured about 2:1 and looked like a real failure.
+    await page.waitForTimeout(700);
     const now = await describe();
     if (!now) break;
     stops += 1;
@@ -682,7 +722,7 @@ async function focusRings(browser, route, limit = 6) {
       window.__focusProbe = document.activeElement;
       document.activeElement?.blur();
     });
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(700);
     const before = `data:image/png;base64,${(await page.screenshot({ clip })).toString("base64")}`;
 
     results.push({
