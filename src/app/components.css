@@ -1,0 +1,381 @@
+/* ============================================================================
+   COMPONENT SURFACES — SHABANEH
+   Written as CSS classes rather than utility soup so that a colour or a size
+   can only ever change in tokens.css. Tailwind is used for layout — flex,
+   spans, order — where it earns its keep.
+
+   No radius anywhere in this file. No `.on-dark` variants either: the ground
+   is dark everywhere, so there is only one treatment of anything.
+   ========================================================================= */
+
+/* ---- Buttons ------------------------------------------------------------
+   Two, and only on the reserve band and the dish pages. There is no cart, no
+   form and no booking widget on this site — the conversion is a phone call or
+   a WhatsApp message, so a button here is always a link that leaves. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 3.25rem; /* 52px — clears the 44px touch target comfortably */
+  padding-inline: var(--space-6);
+  padding-block: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-none);
+  transition:
+    background-color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out);
+}
+
+.btn--primary {
+  background-color: var(--color-brass);
+  color: var(--color-ground);
+}
+.btn--primary:hover {
+  background-color: color-mix(in srgb, var(--color-brass) 82%, #f2ebe3);
+}
+
+.btn--secondary {
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+}
+.btn--secondary:hover {
+  border-color: var(--color-brass);
+  color: var(--color-brass);
+}
+
+/* ---- Lead link — the "next" affordance ---------------------------------- */
+
+.link-lead {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-brass);
+}
+
+.link-lead__text {
+  border-block-end: 1px solid var(--color-line-brass);
+  padding-block-end: 0.12em;
+  transition: border-color var(--dur) var(--ease-out);
+}
+.link-lead:hover .link-lead__text,
+.link-lead:focus-visible .link-lead__text {
+  border-block-end-color: var(--color-brass);
+}
+
+/* ---- Name link — a heading that navigates ------------------------------- */
+/* Inherits whatever heading it sits in, so a dish name keeps the size the type
+   scale gave it. */
+
+.name-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 2.75rem;
+}
+.name-link__text {
+  border-block-end: 1px solid transparent;
+  padding-block-end: 0.08em;
+  transition: border-color var(--dur) var(--ease-out);
+}
+.name-link:hover .name-link__text,
+.name-link:focus-visible .name-link__text {
+  border-block-end-color: var(--color-brass);
+}
+
+/* ---- Eyebrow ------------------------------------------------------------ */
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-brass);
+}
+.eyebrow::before {
+  content: "";
+  inline-size: 2rem;
+  block-size: 1px;
+  background-color: var(--color-brass-deep);
+  flex: none;
+}
+
+/* ---- Course group marker ------------------------------------------------
+   The one piece of structure on the menu. Small plain type on the ground
+   between two bands — not a sticky bar, not a section header, not a filter. A
+   reader scrolling the menu passes it the way they pass a course. */
+
+.group-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding-block: var(--space-8);
+}
+.group-mark__line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-line);
+}
+
+/* ---- Dish details ------------------------------------------------------
+   Label-and-value pairs as a quiet row, never a specification table. SANJEH
+   owns the table in this family. */
+
+.details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-9);
+  padding-block: var(--space-6);
+  border-block: 1px solid var(--color-line);
+}
+.details-row div {
+  min-inline-size: 7rem;
+}
+.details-row dt {
+  font-size: var(--text-meta);
+  color: var(--color-ink-2);
+}
+.details-row dd {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  color: var(--color-ink);
+}
+
+/* ---- Hours and the address -------------------------------------------- */
+
+.detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.detail-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-meta);
+  color: var(--color-ink-2);
+}
+.detail-list__label {
+  min-inline-size: 5rem;
+  color: var(--color-brass);
+}
+
+/* ---- Navigation --------------------------------------------------------
+   At rest the header IS a scrim: a gradient from the ground at the top edge,
+   fading out below its own box. That is not decoration — the header's text
+   sits over a photograph on the opening band, and a translucent bar would put
+   nav links on whatever pixel happened to be behind them.
+
+   The ::before extends to 190% of the header's height and holds >=90% ground
+   through its first 53%, i.e. across the whole header box. Measured: a nav
+   link in --color-ink-2 over 90% ground composited on a blown white highlight
+   is 5.70:1.
+
+   Scrolled, it becomes a plain opaque plane with a hairline, and the gradient
+   and the blur both stop being drawn. */
+
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 50;
+  border-block-end: 1px solid transparent;
+  transition: border-color var(--dur) var(--ease-out);
+}
+
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 190%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-ground) 97%, transparent) 0%,
+    color-mix(in srgb, var(--color-ground) 90%, transparent) 53%,
+    color-mix(in srgb, var(--color-ground) 34%, transparent) 78%,
+    transparent 100%
+  );
+}
+
+.site-header[data-scrolled="true"] {
+  border-block-end-color: var(--color-line);
+  background-color: var(--color-ground);
+}
+.site-header[data-scrolled="true"]::before {
+  /* An opaque plane needs no gradient behind it, and drawing one costs a frame
+     to render something nobody can see. */
+  display: none;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  inset-block-end: 0.5rem;
+  inset-inline: var(--space-3);
+  block-size: 1px;
+  background-color: var(--color-brass);
+  scale: 0 1;
+  transform-origin: right; /* the start edge in RTL */
+  transition: scale var(--dur) var(--ease-out);
+}
+.nav-link:hover,
+.nav-link[aria-current] {
+  color: var(--color-ink);
+}
+.nav-link:hover::after,
+.nav-link[aria-current]::after {
+  scale: 1 1;
+}
+
+/* ---- Mobile navigation panel ------------------------------------------- */
+
+.menu-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-ground);
+  color: var(--color-ink);
+  transform: translate3d(calc(var(--flow-start) * 100%), 0, 0);
+  visibility: hidden;
+  transition:
+    transform var(--dur-slow) var(--ease-in-out),
+    visibility 0s linear var(--dur-slow);
+}
+.menu-panel[data-open="true"] {
+  transform: translate3d(0, 0, 0);
+  visibility: visible;
+  transition:
+    transform var(--dur-slow) var(--ease-in-out),
+    visibility 0s;
+}
+
+.menu-panel__link {
+  display: block;
+  padding-block: var(--space-4);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 9vw, 3rem);
+  line-height: 1.3;
+  color: var(--color-ink);
+  border-block-end: 1px solid var(--color-line);
+  opacity: 0;
+  transform: translate3d(0, 0.75rem, 0);
+  transition:
+    opacity var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out);
+}
+.menu-panel[data-open="true"] .menu-panel__link {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(140ms + var(--i, 0) * 60ms);
+}
+
+.menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  margin-inline-end: calc(var(--space-3) * -1);
+  cursor: pointer;
+}
+.menu-toggle__bar {
+  display: block;
+  block-size: 1px;
+  background-color: currentColor;
+  transition: inline-size var(--dur) var(--ease-out);
+}
+
+/* ---- A photograph that opens the lightbox ------------------------------
+   A real <button>, so it is reachable by keyboard and announces itself
+   without any ARIA patching — and it carries `cursor: pointer` explicitly.
+
+   That last word is not padding. The gallery tiles on the editorial site this
+   engine came from compute `cursor: default`, a known open defect there: a
+   full-bleed image that opens a viewer while the pointer says nothing is
+   happening reads as a picture, not as a control. Asserted in the band
+   harness so it cannot regress quietly. */
+
+.photo-button {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  text-align: start;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  color: inherit;
+}
+
+/* ---- Lightbox ---------------------------------------------------------- */
+
+.lightbox {
+  border: 0;
+  padding: 0;
+  max-inline-size: 100vw;
+  max-block-size: 100vh;
+  inline-size: 100vw;
+  block-size: 100dvh;
+  background-color: transparent;
+  color: var(--color-ink);
+  overflow: hidden;
+}
+.lightbox::backdrop {
+  /* Opaque: the page behind is already near-black, and a translucent backdrop
+     over it makes the enlarged photograph look like it has a haze on it. */
+  background-color: #0c0a08;
+}
+
+/* ---- Footer and menu links --------------------------------------------
+   Text links in a dense list still need a finger-sized hit area. The height
+   comes from the link itself so the list gap can stay at zero and the block
+   does not grow taller than the design intends. */
+
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: var(--color-ink-2);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.footer-link:hover {
+  color: var(--color-ink);
+}
+
+/* ---- Breadcrumb -------------------------------------------------------- */
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.crumb:hover {
+  color: var(--color-brass);
+}
