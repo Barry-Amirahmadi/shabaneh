@@ -35,9 +35,11 @@
      Over a photograph, worst case — the scrim's strongest stop composited over
      a blown white highlight, which is the brightest pixel a candlelit frame
      can contain:
-       scrim light (0.90)   ink 13.34   ink-2 5.70   brass 6.22
-       scrim mid   (0.94)   ink 14.88   ink-2 6.35   brass 6.94
-       scrim deep  (0.97)   ink 15.90   ink-2 6.79   brass 7.42
+       scrim light (0.90)   ink 13.40   ink-2 5.72   brass 6.25
+       scrim mid   (0.94)   ink 14.83   ink-2 6.33   brass 6.92
+       scrim deep  (0.97)   ink 15.94   ink-2 6.81   brass 7.44
+       scrim full  (0.97)   same as deep at the plateau; `full` differs only
+                            in how far up the frame the dimming reaches
    ========================================================================= */
 
 @theme {

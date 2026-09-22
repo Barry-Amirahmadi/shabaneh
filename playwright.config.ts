@@ -21,7 +21,14 @@ import { defineConfig, devices } from "@playwright/test";
  */
 const raw = process.env.SMOKE_BASE_PATH ?? "/shabaneh";
 const BASE_PATH = raw === "/" ? "" : raw.replace(/\/+$/, "");
-const PORT = 4321;
+/**
+ * Overridable for the same reason the base path is, and for one specific
+ * failure: `reuseExistingServer` will happily adopt whatever is already on this
+ * port — including a preview server left running by a *different* site in this
+ * family — and then every assertion fails against a 404 for reasons that look
+ * like the code. Set SMOKE_PORT to step around a squatter.
+ */
+const PORT = Number(process.env.SMOKE_PORT ?? 4321);
 
 export default defineConfig({
   testDir: "./tests",
