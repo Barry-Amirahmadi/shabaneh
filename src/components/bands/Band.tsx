@@ -94,7 +94,11 @@ export function Band({
           /* Every band is full-bleed, so there is one honest answer here. */
           sizes="100vw"
           priority={priority}
-          loading={load === "lazy" ? "lazy" : undefined}
+          // `eager` has to be spelled out. Leaving it undefined does not mean
+          // "the browser default" — next/image defaults an unprioritised image
+          // to `loading="lazy"`, so `load="eager"` silently became lazy and the
+          // first photograph on /about/ was deferred. Caught by check-bands.
+          loading={priority ? undefined : load === "lazy" ? "lazy" : "eager"}
         />
       </div>
 
